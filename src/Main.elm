@@ -1,6 +1,8 @@
-port module Main exposing (Model, Msg(..), add1, init, main, toJs, update, view)
+port module Main exposing (Model, Msg(..), init, main, toJs, update, view)
 
 import Browser
+import Engine
+import GameData
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -24,14 +26,15 @@ port toJs : String -> Cmd msg
 
 
 type alias Model =
-    { counter : Int
+    { world : Engine.World
+    , currScene : Int
     , serverMessage : String
     }
 
 
 init : Int -> ( Model, Cmd Msg )
 init flags =
-    ( { counter = flags, serverMessage = "" }, Cmd.none )
+    ( { currScene = flags, world = GameData.world, serverMessage = "Hello" }, Cmd.none )
 
 
 
@@ -41,21 +44,13 @@ init flags =
 
 
 type Msg
-    = Inc
-    | Set Int
-    | TestServer
+    = TestServer
     | OnServerResponse (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        Inc ->
-            ( add1 model, toJs "Hello Js" )
-
-        Set m ->
-            ( { model | counter = m }, toJs "Hello Js" )
-
         TestServer ->
             let
                 expect =
@@ -93,16 +88,6 @@ httpErrorToString err =
             "BadBody: " ++ s
 
 
-{-| increments the counter
-
-    add1 5 --> 6
-
--}
-add1 : Model -> Model
-add1 model =
-    { model | counter = model.counter + 1 }
-
-
 
 -- ---------------------------
 -- VIEW
@@ -117,17 +102,8 @@ view model =
               span [ class "logo" ] []
             , h1 [] [ text "Elm 0.19 Webpack Starter, with hot-reloading" ]
             ]
-        , p [] [ text "Click on the button below to increment the state." ]
         , div [ class "pure-g" ]
-            [ div [ class "pure-u-1-3" ]
-                [ button
-                    [ class "pure-button pure-button-primary"
-                    , onClick Inc
-                    ]
-                    [ text "+ 1" ]
-                , text <| String.fromInt model.counter
-                ]
-            , div [ class "pure-u-1-3" ] []
+            [ div [ class "pure-u-1-3" ] []
             , div [ class "pure-u-1-3" ]
                 [ button
                     [ class "pure-button pure-button-primary"
@@ -136,11 +112,6 @@ view model =
                     [ text "ping dev server" ]
                 , text model.serverMessage
                 ]
-            ]
-        , p [] [ text "Then make a change to the source code and see how the state is retained after you recompile." ]
-        , p []
-            [ text "And now don't forget to add a star to the Github repo "
-            , a [ href "https://github.com/simonh1000/elm-webpack-starter" ] [ text "elm-webpack-starter" ]
             ]
         ]
 
