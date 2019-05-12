@@ -1,15 +1,14 @@
 port module Main exposing (Model, Msg(..), init, main, toJs, update, view)
 
 import Browser
-import Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, attrsOf, getImg, renderScene)
+import Engine exposing (SceneID, Shape(..), World, renderScene)
 import GameData
 import Graph
-import Html exposing (..)
+import Html exposing (Html, button, div, h1, p, span, text)
 import Html.Attributes as Attrs exposing (class)
 import Html.Events exposing (onClick)
 import Http exposing (Error(..))
 import Json.Decode as Decode
-import Maybe exposing (withDefault)
 
 
 
@@ -106,8 +105,9 @@ view model =
         (defaultGUI model ++ render model.currScene model.world)
 
 
+defaultGUI : Model -> List (Html Msg)
 defaultGUI model =
-    [ header []
+    [ Html.header []
         [ -- img [ src "/images/logo.png" ] []
           span [ class "logo" ] []
         , h1 [] [ text "Elm 0.19 Webpack Starter, with hot-reloading" ]

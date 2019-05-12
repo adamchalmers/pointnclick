@@ -1,7 +1,6 @@
 module GameData exposing (world)
 
-import Engine exposing (..)
-import Graph exposing (empty, insertEdge)
+import Engine exposing (Scene, Shape(..), World, makeWorld)
 
 
 

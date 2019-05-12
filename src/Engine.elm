@@ -1,6 +1,6 @@
 module Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, attrsOf, getImg, makeWorld, renderScene)
 
-import Graph exposing (Graph, empty, insertData, insertEdge, insertEdgeData)
+import Graph exposing (Graph, empty, insertData, insertEdgeData)
 import Html
 import Html.Attributes as Attrs
 import Html.Events exposing (onClick)
