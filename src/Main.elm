@@ -35,7 +35,7 @@ type alias Model =
 
 init : Int -> ( Model, Cmd Msg )
 init flags =
-    ( { currScene = flags, world = GameData.world, serverMessage = "Hello" }, Cmd.none )
+    ( { currScene = GameData.firstScene, world = GameData.world, serverMessage = "Hello" }, Cmd.none )
 
 
 
@@ -126,11 +126,15 @@ defaultGUI model =
     ]
 
 
+imgNamed filename =
+    "images/" ++ filename ++ ".png"
+
+
 render : SceneID -> World -> List (Html Msg)
 render sceneID world =
     case Graph.getData sceneID world of
         Just sceneData ->
-            renderScene ChangeScene sceneData
+            renderScene ChangeScene imgNamed sceneData
 
         Nothing ->
             [ p [] [ text <| "No scene #" ++ String.fromInt sceneID ++ " exists" ] ]

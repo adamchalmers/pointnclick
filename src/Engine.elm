@@ -1,4 +1,4 @@
-module Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, attrsOf, getImg, makeWorld, renderScene)
+module Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, makeWorld, renderScene)
 
 import Graph exposing (Graph, empty, insertData, insertEdgeData)
 import Html
@@ -51,19 +51,15 @@ type alias World =
     Graph Int SceneData TransitionData
 
 
-getImg : SceneData -> String
-getImg sceneData =
-    "images/" ++ sceneData.img ++ ".png"
-
-
 
 -- ---------------------------
 -- Rendering
 -- ---------------------------
 
 
-renderScene : (SceneID -> msg) -> SceneData -> List (Html.Html msg)
-renderScene msgConstructor sceneData =
+renderScene : (SceneID -> msg) -> (String -> String) -> SceneData -> List (Html.Html msg)
+renderScene msgConstructor locateImage sceneData =
+    -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
         attrs =
             [ Attrs.name "scene" ]
@@ -78,7 +74,7 @@ renderScene msgConstructor sceneData =
     [ Html.node "map" attrs areas
     , Html.img
         [ Attrs.usemap "#scene"
-        , Attrs.src (getImg sceneData)
+        , Attrs.src (locateImage sceneData.img)
         , Attrs.alt "Game scene"
         , Attrs.width 800
         , Attrs.height 600
@@ -121,21 +117,19 @@ attrsOf s =
 
 makeWorld : List Scene -> World
 makeWorld scenes =
-    foldr addScene empty scenes
-
-
-addScene : Scene -> World -> World
-addScene s =
     let
         addSceneData scene =
             insertData scene.id scene.data
 
         addTransitions : Scene -> World -> World
         addTransitions scene world =
-            foldr (f scene.id) world scene.data.transitions
+            foldr (addTransition scene.id) world scene.data.transitions
 
-        f : SceneID -> Transition -> World -> World
-        f origin transition =
+        addTransition : SceneID -> Transition -> World -> World
+        addTransition origin transition =
             insertEdgeData origin transition.to transition.data
+
+        addScene s =
+            addTransitions s << addSceneData s
     in
-    addTransitions s << addSceneData s
+    foldr addScene empty scenes

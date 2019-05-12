@@ -1,6 +1,6 @@
-module GameData exposing (world)
+module GameData exposing (firstScene, world)
 
-import Engine exposing (Scene, Shape(..), World, makeWorld)
+import Engine exposing (Scene, SceneID, Shape(..), World, makeWorld)
 
 
 
@@ -39,6 +39,11 @@ dock =
             ]
         }
     }
+
+
+firstScene : SceneID
+firstScene =
+    0
 
 
 world : World
