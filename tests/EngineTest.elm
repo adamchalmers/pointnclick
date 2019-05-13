@@ -56,6 +56,11 @@ testMakeSimpleWorld =
                 world
                     |> Graph.getData 2
                     |> Expect.equal (Just scene2Data)
+        , test "there is no scene 3" <|
+            \() ->
+                world
+                    |> Graph.getData 3
+                    |> Expect.equal Nothing
         , test "edge 1->2 data correct" <|
             \() ->
                 world
@@ -149,6 +154,11 @@ testMakeWorld =
                 world
                     |> Graph.getData 3
                     |> Expect.equal (Just scene3Data)
+        , test "there is no scene 4" <|
+            \() ->
+                world
+                    |> Graph.getData 4
+                    |> Expect.equal Nothing
         , test "edge 1->2 data correct" <|
             \() ->
                 world
