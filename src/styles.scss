@@ -1,14 +1,17 @@
 @import '~purecss/build/pure.css';
 
 body {
-    background-color: #ddd;
+    background-color: #222;
     margin-top: 20px;
+    color: #ddd;
 }
+
 .container {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
+
 header {
     display: flex;
     align-items: center;
@@ -20,10 +23,6 @@ header {
 
 button {
     margin-right: 15px;
-}
-
-map {
-    border: 1px solid red;
 }
 
 .logo {

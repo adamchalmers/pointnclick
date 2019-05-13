@@ -1,7 +1,7 @@
-module Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, makeWorld, renderScene)
+module Engine exposing (Scene, SceneData, SceneID, Shape(..), Transition, World, makeWorld, renderHeight, renderScene, renderWidth)
 
 import Graph exposing (Graph, empty, insertData, insertEdgeData)
-import Html
+import Html exposing (div)
 import Html.Attributes as Attrs
 import Html.Events exposing (onClick)
 import List exposing (foldr, intersperse)
@@ -57,7 +57,15 @@ type alias World =
 -- ---------------------------
 
 
-renderScene : (SceneID -> msg) -> (String -> String) -> SceneData -> List (Html.Html msg)
+renderWidth =
+    800
+
+
+renderHeight =
+    600
+
+
+renderScene : (SceneID -> msg) -> (String -> String) -> SceneData -> Html.Html msg
 renderScene msgConstructor locateImage sceneData =
     -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
@@ -71,16 +79,18 @@ renderScene msgConstructor locateImage sceneData =
         areas =
             List.map toArea sceneData.transitions
     in
-    [ Html.node "map" attrs areas
-    , Html.img
-        [ Attrs.usemap "#scene"
-        , Attrs.src (locateImage sceneData.img)
-        , Attrs.alt "Game scene"
-        , Attrs.width 800
-        , Attrs.height 600
+    div []
+        [ Html.node "map" attrs areas
+        , Html.img
+            [ Attrs.class "scene"
+            , Attrs.usemap "#scene"
+            , Attrs.src (locateImage sceneData.img)
+            , Attrs.alt "Game scene"
+            , Attrs.width renderWidth
+            , Attrs.height renderHeight
+            ]
+            []
         ]
-        []
-    ]
 
 
 attrsOf : Shape -> List (Html.Attribute msg)

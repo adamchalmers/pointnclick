@@ -102,42 +102,36 @@ httpErrorToString err =
 view : Model -> Html Msg
 view model =
     div [ class "container" ]
-        (defaultGUI model ++ render model.currScene model.world)
-
-
-defaultGUI : Model -> List (Html Msg)
-defaultGUI model =
-    [ Html.header []
-        [ -- img [ src "/images/logo.png" ] []
-          span [ class "logo" ] []
-        , h1 [] [ text "Elm 0.19 Webpack Starter, with hot-reloading" ]
-        ]
-    , div [ class "pure-g" ]
-        [ div [ class "pure-u-1-3" ] []
-        , div [ class "pure-u-1-3" ]
-            [ button
-                [ class "pure-button pure-button-primary"
-                , onClick TestServer
-                ]
-                [ text "ping dev server" ]
-            , text model.serverMessage
+        [ Html.header []
+            [ h1 [] [ text "ElMyst" ]
             ]
+        , div [ class "pure-g" ]
+            [ div [ class "pure-u-1-3" ] []
+            , div [ class "pure-u-1-3" ]
+                [ button
+                    [ class "pure-button pure-button-primary"
+                    , onClick TestServer
+                    ]
+                    [ text "ping dev server" ]
+                , text model.serverMessage
+                ]
+            ]
+        , render model.currScene model.world
         ]
-    ]
 
 
 imgNamed filename =
     "images/" ++ filename ++ ".png"
 
 
-render : SceneID -> World -> List (Html Msg)
+render : SceneID -> World -> Html Msg
 render sceneID world =
     case Graph.getData sceneID world of
         Just sceneData ->
             renderScene ChangeScene imgNamed sceneData
 
         Nothing ->
-            [ p [] [ text <| "No scene #" ++ String.fromInt sceneID ++ " exists" ] ]
+            p [] [ text <| "No scene #" ++ String.fromInt sceneID ++ " exists" ]
 
 
 
