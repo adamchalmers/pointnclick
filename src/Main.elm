@@ -136,7 +136,7 @@ view model =
 
 
 imgNamed filename =
-    "images/" ++ filename ++ ".png"
+    "images/" ++ filename
 
 
 render : SceneID -> World GameData.State -> Html Msg

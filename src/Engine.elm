@@ -5,7 +5,8 @@ import Html exposing (div)
 import Html.Attributes as Attrs
 import Html.Events exposing (onClick)
 import List exposing (foldr, intersperse)
-import String exposing (concat)
+import String
+import Tuple exposing (first, second)
 
 
 
@@ -35,6 +36,10 @@ type alias SceneData a =
 type alias Target a =
     { shape : Shape
     , action : a -> a
+    , img : String
+    , topLeft : ( Int, Int )
+    , dimensions : Maybe ( Int, Int )
+    , description : String
     }
 
 
@@ -76,32 +81,67 @@ renderScene : (SceneID -> msg) -> ((state -> state) -> msg) -> (String -> String
 renderScene transitionMsg stateMsg locateImage sceneData =
     -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
-        attrs =
-            [ Attrs.name "scene" ]
-
         transitionToArea : Transition -> Html.Html msg
         transitionToArea t =
-            Html.node "area" (onClick (transitionMsg t.to) :: attrsOf t.data.shape) []
+            area <| onClick (transitionMsg t.to) :: attrsOf t.data.shape
 
         targetToArea : Target state -> Html.Html msg
         targetToArea t =
-            Html.node "area" (onClick (stateMsg t.action) :: attrsOf t.shape) []
+            area <| onClick (stateMsg t.action) :: attrsOf t.shape
+
+        targetToImg : Target state -> Html.Html msg
+        targetToImg t =
+            let
+                dimensionAttrs =
+                    case t.dimensions of
+                        Nothing ->
+                            []
+
+                        Just ( w, h ) ->
+                            [ Attrs.width w
+                            , Attrs.height h
+                            ]
+
+                mainAttrs =
+                    [ Attrs.src (locateImage t.img)
+                    , Attrs.alt t.description
+                    ]
+            in
+            Html.img (mainAttrs ++ dimensionAttrs) []
 
         areas =
-            List.map transitionToArea sceneData.transitions ++ List.map targetToArea sceneData.targets
+            List.concat
+                [ List.map transitionToArea sceneData.transitions
+                , List.map targetToArea sceneData.targets
+                ]
+
+        area attrs =
+            Html.node "area" attrs []
+
+        sceneImg =
+            Html.img
+                [ Attrs.class "scene"
+                , Attrs.usemap "#scene"
+                , Attrs.src (locateImage sceneData.img)
+                , Attrs.alt sceneData.description
+                , Attrs.width renderWidth
+                , Attrs.height renderHeight
+                ]
+                []
+
+        targetImgs =
+            List.map targetToImg sceneData.targets
     in
-    div []
-        [ Html.node "map" attrs areas
-        , Html.img
-            [ Attrs.class "scene"
-            , Attrs.usemap "#scene"
-            , Attrs.src (locateImage sceneData.img)
-            , Attrs.alt sceneData.description
-            , Attrs.width renderWidth
-            , Attrs.height renderHeight
-            ]
-            []
+    div
+        [ Attrs.width renderWidth
+        , Attrs.height renderHeight
         ]
+    <|
+        List.concat
+            [ targetImgs
+            , [ Html.node "map" [ Attrs.name "scene" ] areas ]
+            , [ sceneImg ]
+            ]
 
 
 attrsOf : Shape -> List (Html.Attribute msg)
@@ -123,7 +163,7 @@ attrsOf s =
                     [ String.fromInt x1, String.fromInt y1, String.fromInt x2, String.fromInt y2 ]
 
                 coordStr =
-                    fourCoords |> intersperse "," |> concat
+                    fourCoords |> intersperse "," |> String.concat
             in
             [ Attrs.shape "rect"
             , Attrs.coords coordStr
