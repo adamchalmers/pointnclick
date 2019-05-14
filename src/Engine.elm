@@ -72,19 +72,23 @@ renderHeight =
     600
 
 
-renderScene : (SceneID -> msg) -> (String -> String) -> SceneData a -> Html.Html msg
-renderScene msgConstructor locateImage sceneData =
+renderScene : (SceneID -> msg) -> ((state -> state) -> msg) -> (String -> String) -> SceneData state -> Html.Html msg
+renderScene transitionMsg stateMsg locateImage sceneData =
     -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
         attrs =
             [ Attrs.name "scene" ]
 
-        toArea : Transition -> Html.Html msg
-        toArea transition =
-            Html.node "area" (onClick (msgConstructor transition.to) :: attrsOf transition.data.shape) []
+        transitionToArea : Transition -> Html.Html msg
+        transitionToArea t =
+            Html.node "area" (onClick (transitionMsg t.to) :: attrsOf t.data.shape) []
+
+        targetToArea : Target state -> Html.Html msg
+        targetToArea t =
+            Html.node "area" (onClick (stateMsg t.action) :: attrsOf t.shape) []
 
         areas =
-            List.map toArea sceneData.transitions
+            List.map transitionToArea sceneData.transitions ++ List.map targetToArea sceneData.targets
     in
     div []
         [ Html.node "map" attrs areas

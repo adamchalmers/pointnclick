@@ -59,6 +59,7 @@ type Msg
     = TestServer
     | OnServerResponse (Result Http.Error String)
     | ChangeScene SceneID
+    | ChangeState (GameData.State -> GameData.State)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -66,6 +67,9 @@ update message model =
     case message of
         ChangeScene id ->
             ( { model | currScene = id }, Cmd.none )
+
+        ChangeState f ->
+            ( { model | state = f model.state }, Cmd.none )
 
         TestServer ->
             let
@@ -139,7 +143,7 @@ render : SceneID -> World GameData.State -> Html Msg
 render sceneID world =
     case Graph.getData sceneID world of
         Just sceneData ->
-            renderScene ChangeScene imgNamed sceneData
+            renderScene ChangeScene ChangeState imgNamed sceneData
 
         Nothing ->
             p [] [ text <| "No scene #" ++ String.fromInt sceneID ++ " exists" ]
