@@ -17,6 +17,7 @@ testMakeSimpleWorld =
             { img = "img1"
             , targets = []
             , transitions = [ { to = 2, data = edge1to2 } ]
+            , description = "test scene 1"
             }
 
         scene1 =
@@ -29,6 +30,7 @@ testMakeSimpleWorld =
             { img = "img2"
             , targets = []
             , transitions = []
+            , description = "test scene 2"
             }
 
         scene2 =
@@ -98,6 +100,7 @@ testMakeWorld =
                 [ { to = 2, data = edge1to2 }
                 , { to = 3, data = edge1to3 }
                 ]
+            , description = "test scene 1"
             }
 
         scene1 =
@@ -110,6 +113,7 @@ testMakeWorld =
             { img = "img2"
             , targets = []
             , transitions = []
+            , description = "test scene 2"
             }
 
         scene2 =
@@ -122,6 +126,7 @@ testMakeWorld =
             { img = "img3"
             , targets = []
             , transitions = [ { to = 1, data = edge3to1 } ]
+            , description = "test scene 3"
             }
 
         scene3 =

@@ -27,15 +27,26 @@ port toJs : String -> Cmd msg
 
 
 type alias Model =
-    { world : Engine.World
+    { world : Engine.World GameData.State
     , currScene : SceneID
     , serverMessage : String
+    , state : GameData.State
     }
 
 
 init : Int -> ( Model, Cmd Msg )
 init flags =
-    ( { currScene = GameData.firstScene, world = GameData.world, serverMessage = "Hello" }, Cmd.none )
+    let
+        ( firstScene, newGameState ) =
+            GameData.newGame
+    in
+    ( { currScene = firstScene
+      , world = GameData.world
+      , serverMessage = "Hello"
+      , state = newGameState
+      }
+    , Cmd.none
+    )
 
 
 
@@ -124,7 +135,7 @@ imgNamed filename =
     "images/" ++ filename ++ ".png"
 
 
-render : SceneID -> World -> Html Msg
+render : SceneID -> World GameData.State -> Html Msg
 render sceneID world =
     case Graph.getData sceneID world of
         Just sceneData ->

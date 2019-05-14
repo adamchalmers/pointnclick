@@ -18,16 +18,23 @@ type alias SceneID =
     Int
 
 
-type alias Scene =
+type alias Scene a =
     { id : SceneID
-    , data : SceneData
+    , data : SceneData a
     }
 
 
-type alias SceneData =
+type alias SceneData a =
     { img : String
-    , targets : List Shape
+    , targets : List (Target a)
     , transitions : List Transition
+    , description : String
+    }
+
+
+type alias Target a =
+    { shape : Shape
+    , action : a -> a
     }
 
 
@@ -46,9 +53,9 @@ type alias TransitionData =
     { shape : Shape }
 
 
-type alias World =
+type alias World a =
     -- Remember Graph is type (Graph nodeID nodeData edgeData)
-    Graph Int SceneData TransitionData
+    Graph Int (SceneData a) TransitionData
 
 
 
@@ -65,7 +72,7 @@ renderHeight =
     600
 
 
-renderScene : (SceneID -> msg) -> (String -> String) -> SceneData -> Html.Html msg
+renderScene : (SceneID -> msg) -> (String -> String) -> SceneData a -> Html.Html msg
 renderScene msgConstructor locateImage sceneData =
     -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
@@ -85,7 +92,7 @@ renderScene msgConstructor locateImage sceneData =
             [ Attrs.class "scene"
             , Attrs.usemap "#scene"
             , Attrs.src (locateImage sceneData.img)
-            , Attrs.alt "Game scene"
+            , Attrs.alt sceneData.description
             , Attrs.width renderWidth
             , Attrs.height renderHeight
             ]
@@ -125,17 +132,17 @@ attrsOf s =
 -- ---------------------------
 
 
-makeWorld : List Scene -> World
+makeWorld : List (Scene a) -> World a
 makeWorld scenes =
     let
         addSceneData scene =
             insertData scene.id scene.data
 
-        addTransitions : Scene -> World -> World
+        addTransitions : Scene a -> World a -> World a
         addTransitions scene world =
             foldr (addTransition scene.id) world scene.data.transitions
 
-        addTransition : SceneID -> Transition -> World -> World
+        addTransition : SceneID -> Transition -> World a -> World a
         addTransition origin transition =
             insertEdgeData origin transition.to transition.data
 
