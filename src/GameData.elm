@@ -52,7 +52,7 @@ dock =
 
                         else
                             "dots_off.jpg"
-              , topLeft = ( 420, 704 )
+              , topLeft = ( 300, 500 )
               , dimensions = Nothing
               , description = "A lever"
               }

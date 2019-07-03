@@ -1,10 +1,10 @@
 port module Main exposing (Model, Msg(..), init, main, toJs, update, view)
 
 import Browser
-import Engine exposing (SceneID, Shape(..), World, renderScene)
+import Engine exposing (SceneID, Shape(..), renderScene)
 import GameData
 import Graph
-import Html exposing (Html, button, div, h1, p, span, text)
+import Html exposing (Html, button, div, h1, p, text)
 import Html.Attributes as Attrs exposing (class)
 import Html.Events exposing (onClick)
 import Http exposing (Error(..))
@@ -135,6 +135,7 @@ view model =
         ]
 
 
+imgNamed : String -> String
 imgNamed filename =
     "images/" ++ filename
 

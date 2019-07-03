@@ -6,7 +6,6 @@ import Html.Attributes as Attrs
 import Html.Events exposing (onClick)
 import List exposing (foldr, intersperse)
 import String
-import Tuple exposing (first, second)
 
 
 
@@ -85,10 +84,6 @@ renderScene transitionMsg stateMsg locateImage sceneData state =
         transitionToArea t =
             area <| onClick (transitionMsg t.to) :: attrsOf t.data.shape
 
-        targetToArea : Target state -> Html.Html msg
-        targetToArea t =
-            area <| onClick (stateMsg t.action) :: attrsOf t.shape
-
         targetToImg : Target state -> Html.Html msg
         targetToImg t =
             let
@@ -112,15 +107,13 @@ renderScene transitionMsg stateMsg locateImage sceneData state =
                     , Attrs.style "display" "block"
                     , Attrs.style "top" (intToPx top)
                     , Attrs.style "left" (intToPx left)
+                    , onClick <| stateMsg t.action
                     ]
             in
             Html.img (mainAttrs ++ dimensionAttrs) []
 
         areas =
-            List.concat
-                [ List.map transitionToArea sceneData.transitions
-                , List.map targetToArea sceneData.targets
-                ]
+            List.map transitionToArea sceneData.transitions
 
         area attrs =
             Html.node "area" attrs []
@@ -142,6 +135,7 @@ renderScene transitionMsg stateMsg locateImage sceneData state =
     div
         [ Attrs.width renderWidth
         , Attrs.height renderHeight
+        , Attrs.style "position" "relative"
         ]
     <|
         List.concat
