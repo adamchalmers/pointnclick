@@ -19,24 +19,24 @@ type alias SceneID =
     Int
 
 
-type alias Scene a =
+type alias Scene s =
     { id : SceneID
-    , data : SceneData a
+    , data : SceneData s
     }
 
 
-type alias SceneData a =
+type alias SceneData s =
     { img : String
-    , targets : List (Target a)
+    , targets : List (Target s)
     , transitions : List Transition
     , description : String
     }
 
 
-type alias Target a =
+type alias Target s =
     { shape : Shape
-    , action : a -> a
-    , img : String
+    , action : s -> s
+    , img : s -> String
     , topLeft : ( Int, Int )
     , dimensions : Maybe ( Int, Int ) -- If Nothing, use default image source dimensions
     , description : String
@@ -77,8 +77,8 @@ renderHeight =
     600
 
 
-renderScene : (SceneID -> msg) -> ((state -> state) -> msg) -> (String -> String) -> SceneData state -> Html.Html msg
-renderScene transitionMsg stateMsg locateImage sceneData =
+renderScene : (SceneID -> msg) -> ((state -> state) -> msg) -> (String -> String) -> SceneData state -> state -> Html.Html msg
+renderScene transitionMsg stateMsg locateImage sceneData state =
     -- Returns an <img> displaying the scene and a <map> that activates transitions when clicked.
     let
         transitionToArea : Transition -> Html.Html msg
@@ -106,7 +106,7 @@ renderScene transitionMsg stateMsg locateImage sceneData =
                     t.topLeft
 
                 mainAttrs =
-                    [ Attrs.src (locateImage t.img)
+                    [ Attrs.src (locateImage <| t.img state)
                     , Attrs.alt t.description
                     , Attrs.style "position" "absolute"
                     , Attrs.style "display" "block"

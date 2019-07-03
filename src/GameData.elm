@@ -45,7 +45,13 @@ dock =
         , targets =
             [ { shape = Circle { x = 400, y = 300, radius = 100 }
               , action = \s -> { s | leverOn = not s.leverOn }
-              , img = "dots.jpg"
+              , img =
+                    \s ->
+                        if s.leverOn then
+                            "dots_on.jpg"
+
+                        else
+                            "dots_off.jpg"
               , topLeft = ( 420, 704 )
               , dimensions = Nothing
               , description = "A lever"

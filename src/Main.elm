@@ -131,7 +131,7 @@ view model =
                 , text model.serverMessage
                 ]
             ]
-        , render model.currScene model.world
+        , render model
         ]
 
 
@@ -139,14 +139,14 @@ imgNamed filename =
     "images/" ++ filename
 
 
-render : SceneID -> World GameData.State -> Html Msg
-render sceneID world =
-    case Graph.getData sceneID world of
+render : Model -> Html Msg
+render model =
+    case Graph.getData model.currScene model.world of
         Just sceneData ->
-            renderScene ChangeScene ChangeState imgNamed sceneData
+            renderScene ChangeScene ChangeState imgNamed sceneData model.state
 
         Nothing ->
-            p [] [ text <| "No scene #" ++ String.fromInt sceneID ++ " exists" ]
+            p [] [ text <| "No scene #" ++ String.fromInt model.currScene ++ " exists" ]
 
 
 
