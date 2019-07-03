@@ -38,7 +38,7 @@ type alias Target a =
     , action : a -> a
     , img : String
     , topLeft : ( Int, Int )
-    , dimensions : Maybe ( Int, Int )
+    , dimensions : Maybe ( Int, Int ) -- If Nothing, use default image source dimensions
     , description : String
     }
 
@@ -102,9 +102,16 @@ renderScene transitionMsg stateMsg locateImage sceneData =
                             , Attrs.height h
                             ]
 
+                ( top, left ) =
+                    t.topLeft
+
                 mainAttrs =
                     [ Attrs.src (locateImage t.img)
                     , Attrs.alt t.description
+                    , Attrs.style "position" "absolute"
+                    , Attrs.style "display" "block"
+                    , Attrs.style "top" (intToPx top)
+                    , Attrs.style "left" (intToPx left)
                     ]
             in
             Html.img (mainAttrs ++ dimensionAttrs) []
@@ -142,6 +149,11 @@ renderScene transitionMsg stateMsg locateImage sceneData =
             , [ Html.node "map" [ Attrs.name "scene" ] areas ]
             , [ sceneImg ]
             ]
+
+
+intToPx : Int -> String
+intToPx i =
+    String.fromInt i ++ "px"
 
 
 attrsOf : Shape -> List (Html.Attribute msg)
